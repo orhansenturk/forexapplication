@@ -1,0 +1,5 @@
+exchange-rate:
+  api:
+    url: https://api.exchangerate-api.com/v4
+    key: 22f0770bafaa796bcc150b2e
+    refresh-interval-minutes: 60

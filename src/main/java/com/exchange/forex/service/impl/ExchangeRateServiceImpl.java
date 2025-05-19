@@ -1,0 +1,28 @@
+package com.exchange.forex.service.impl;
+
+import com.exchange.forex.exception.ExternalServiceException;
+import com.exchange.forex.integration.ExchangeRateProvider;
+import com.exchange.forex.service.ExchangeRateService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class ExchangeRateServiceImpl implements ExchangeRateService {
+
+    private final ExchangeRateProvider exchangeRateProvider;
+
+    public double getExchangeRate(String sourceCurrency, String targetCurrency) {
+        if (sourceCurrency == null || sourceCurrency.length() != 3) {
+            throw new IllegalArgumentException("Source currency must be a 3-character code.");
+        }
+        if (targetCurrency == null || targetCurrency.length() != 3) {
+            throw new IllegalArgumentException("Target currency must be a 3-character code.");
+        }
+        try {
+            return exchangeRateProvider.getExchangeRate(sourceCurrency, targetCurrency);
+        } catch (ExternalServiceException e) {
+            throw new RuntimeException("Failed to get exchange rate: " + e.getMessage(), e);
+        }
+    }
+}
