@@ -1,7 +1,8 @@
 package com.exchange.forex.service.impl;
 
 import com.exchange.forex.exception.ExternalServiceException;
-import com.exchange.forex.integration.ExchangeRateProvider;
+import com.exchange.forex.integration.impl.ExchangeRateProviderService;
+import com.exchange.forex.service.ExchangeRateService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,10 +16,10 @@ import static org.mockito.Mockito.when;
 class ExchangeRateServiceImplTest {
 
     @Mock
-    private ExchangeRateProvider exchangeRateProvider;
+    private ExchangeRateProviderService exchangeRateProviderService;
 
     @InjectMocks
-    private ExchangeRateServiceImpl exchangeRateService;
+    private ExchangeRateService exchangeRateService;
 
     private static final String SOURCE_CURRENCY = "USD";
     private static final String TARGET_CURRENCY = "EUR";
@@ -26,7 +27,7 @@ class ExchangeRateServiceImplTest {
 
     @Test
     void getExchangeRateSuccess() throws ExternalServiceException {
-        when(exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
+        when(exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
             .thenReturn(EXCHANGE_RATE);
 
         double rate = exchangeRateService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY);
@@ -59,7 +60,7 @@ class ExchangeRateServiceImplTest {
 
     @Test
     void getExchangeRateExternalServiceError() throws ExternalServiceException {
-        when(exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
+        when(exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
             .thenThrow(new ExternalServiceException("API Error"));
 
         assertThrows(RuntimeException.class,

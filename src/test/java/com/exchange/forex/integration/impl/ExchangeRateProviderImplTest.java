@@ -30,7 +30,7 @@ class ExchangeRateProviderImplTest {
     private ObjectMapper objectMapper;
 
     @InjectMocks
-    private ExchangeRateProviderImpl exchangeRateProvider;
+    private ExchangeRateProviderService exchangeRateProviderService;
 
     private static final String SOURCE_CURRENCY = "USD";
     private static final String TARGET_CURRENCY = "EUR";
@@ -40,8 +40,8 @@ class ExchangeRateProviderImplTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(exchangeRateProvider, "apiUrl", API_URL);
-        ReflectionTestUtils.setField(exchangeRateProvider, "apiKey", API_KEY);
+        ReflectionTestUtils.setField(exchangeRateProviderService, "apiUrl", API_URL);
+        ReflectionTestUtils.setField(exchangeRateProviderService, "apiKey", API_KEY);
     }
 
     @Test
@@ -54,7 +54,7 @@ class ExchangeRateProviderImplTest {
         String expectedUrl = String.format("%s/latest/%s?apikey=%s", API_URL, SOURCE_CURRENCY, API_KEY);
         when(restTemplate.getForObject(expectedUrl, Map.class)).thenReturn(response);
 
-        double rate = exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY);
+        double rate = exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY);
         assertEquals(EXCHANGE_RATE, rate);
     }
 
@@ -64,7 +64,7 @@ class ExchangeRateProviderImplTest {
             .thenThrow(new RestClientException("API Error"));
 
         assertThrows(ExternalServiceException.class,
-            () -> exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
+            () -> exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
     }
 
     @Test
@@ -72,7 +72,7 @@ class ExchangeRateProviderImplTest {
         when(restTemplate.getForObject(anyString(), eq(Map.class))).thenReturn(null);
 
         assertThrows(ExternalServiceException.class,
-            () -> exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
+            () -> exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
     }
 
     @Test
@@ -81,7 +81,7 @@ class ExchangeRateProviderImplTest {
         when(restTemplate.getForObject(anyString(), eq(Map.class))).thenReturn(response);
 
         assertThrows(ExternalServiceException.class,
-            () -> exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
+            () -> exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
     }
 
     @Test
@@ -92,6 +92,6 @@ class ExchangeRateProviderImplTest {
         when(restTemplate.getForObject(anyString(), eq(Map.class))).thenReturn(response);
 
         assertThrows(ExternalServiceException.class,
-            () -> exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
+            () -> exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY));
     }
 }

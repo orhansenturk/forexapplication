@@ -2,7 +2,8 @@ package com.exchange.forex.service.impl;
 
 import com.exchange.forex.dto.response.ConversionResponse;
 import com.exchange.forex.exception.ExternalServiceException;
-import com.exchange.forex.integration.ExchangeRateProvider;
+import com.exchange.forex.integration.impl.ExchangeRateProviderService;
+import com.exchange.forex.service.CurrencyConversionService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,17 +18,16 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CurrencyConversionServiceImplTest {
 
     @Mock
-    private ExchangeRateProvider exchangeRateProvider;
+    private ExchangeRateProviderService exchangeRateProviderService;
 
     @InjectMocks
-    private CurrencyConversionServiceImpl conversionService;
+    private CurrencyConversionService conversionService;
 
     private static final String SOURCE_CURRENCY = "USD";
     private static final String TARGET_CURRENCY = "EUR";
@@ -37,7 +36,7 @@ class CurrencyConversionServiceImplTest {
 
     @Test
     void convertCurrencySuccess() throws ExternalServiceException {
-        when(exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
+        when(exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
             .thenReturn(EXCHANGE_RATE);
 
         ConversionResponse response = conversionService.convertCurrency(AMOUNT, SOURCE_CURRENCY, TARGET_CURRENCY);
@@ -73,7 +72,7 @@ class CurrencyConversionServiceImplTest {
     @Test
     void getConversionHistoryByTransactionId() throws ExternalServiceException {
         // First perform a conversion to have something in history
-        when(exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
+        when(exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
             .thenReturn(EXCHANGE_RATE);
         ConversionResponse conversion = conversionService.convertCurrency(AMOUNT, SOURCE_CURRENCY, TARGET_CURRENCY);
 
@@ -92,7 +91,7 @@ class CurrencyConversionServiceImplTest {
     @Test
     void getConversionHistoryByDate() throws ExternalServiceException {
         // First perform a conversion to have something in history
-        when(exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
+        when(exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
             .thenReturn(EXCHANGE_RATE);
         conversionService.convertCurrency(AMOUNT, SOURCE_CURRENCY, TARGET_CURRENCY);
 
@@ -116,7 +115,7 @@ class CurrencyConversionServiceImplTest {
 
     @Test
     void processBulkConversionsSuccess() throws IOException, ExternalServiceException {
-        when(exchangeRateProvider.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
+        when(exchangeRateProviderService.getExchangeRate(SOURCE_CURRENCY, TARGET_CURRENCY))
             .thenReturn(EXCHANGE_RATE);
 
         String csvContent = "amount,sourceCurrency,targetCurrency\n" +

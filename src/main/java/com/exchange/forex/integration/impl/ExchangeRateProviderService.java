@@ -1,7 +1,6 @@
 package com.exchange.forex.integration.impl;
 
 import com.exchange.forex.exception.ExternalServiceException;
-import com.exchange.forex.integration.ExchangeRateProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +10,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class ExchangeRateProviderImpl implements ExchangeRateProvider {
+public class ExchangeRateProviderService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -20,8 +19,6 @@ public class ExchangeRateProviderImpl implements ExchangeRateProvider {
     @Value("${exchange-rate.api.key}")
     private String apiKey;
 
-
-    @Override
     public double getExchangeRate(String sourceCurrency, String targetCurrency) throws ExternalServiceException {
         String url = String.format("%s/latest/%s?apikey=%s", apiUrl, sourceCurrency, apiKey);
 
